@@ -1,0 +1,8 @@
+name: Landmark
+version: '${version}'
+main: cat.nyaa.landmark.Landmark
+api-version: 1.18
+prefix: Landmark
+depend: [NyaaCore,aolib]
+authors: [ NyaaCatCommunity ]
+website: https://github.com/NyaaCat/Landmark
