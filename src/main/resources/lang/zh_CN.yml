@@ -1,0 +1,31 @@
+ui:
+  menu:
+    title: "传送到"
+  adminmenu:
+    title: "传送到"
+command:
+  reload:
+    success: "重载成功"
+  deactivate:
+    success: "取消激活地标 %s"
+    not_yet_activated: "地标 %s 未出于激活状态"
+  activate:
+    no_permission: "没有激活地表 %s 的权限"
+    success: "成功激活地标 %s"
+    already_activated: "地标 %s 已被激活过了"
+  remove:
+    finish: "地标: %s 已删除"
+  edit:
+    finish: "地标: %s 已经修改"
+  all:
+    finish: "地标: %s 已创建"
+  only-player-can-do: "只有玩家可以执行此命令"
+  invalid_target: "目标 %s 无效"
+  landmark_not_found: "地标 %s 不存在"
+  landmark_already_exist: "地标 %s 已经存在"
+  world_not_found: "没有找到世界 %s"
+message:
+  landmark:
+    not_found: "未找到名称为 %s 的地标"
+    teleport: "传送到 %s"
+    no_permission: "没有访问 %s 地标的权限"

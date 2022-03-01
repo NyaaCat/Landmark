@@ -45,7 +45,7 @@ dependencies {
         compileOnly project(":aolib")
     } else {
         compileOnly('cat.nyaa:nyaacore:9.0-SNAPSHOT') { transitive = true }
-        compileOnly('cat.nyaa:aolib:1.0.18') { transitive = true }
+        compileOnly('cat.nyaa:aolib:1.0.27') { transitive = true }
     }
     compileOnly 'org.jetbrains:annotations:22.0.0'
 }

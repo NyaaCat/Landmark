@@ -1,8 +1,27 @@
 name: Landmark
 version: '${version}'
-main: cat.nyaa.landmark.Landmark
+main: cat.nyaa.landmark.LandmarkPlugin
 api-version: 1.18
 prefix: Landmark
-depend: [NyaaCore,aolib]
-authors: [ NyaaCatCommunity ]
+depend: [ NyaaCore,aolib ]
+authors: [ NyaaCat Community ]
 website: https://github.com/NyaaCat/Landmark
+commands:
+  landmark:
+    usage: "/lm <args>"
+    description: ""
+    aliases:
+      - "lm"
+    permission: "landmark.command"
+  landmarkadmin:
+    usage: "/lma <args>"
+    aliases:
+      - "lma"
+    permission: "landmark.admin"
+permissions:
+  landmark.admin:
+    default: op
+  landmark.admin.add:
+    default: op
+  landmark.command:
+    default: true
