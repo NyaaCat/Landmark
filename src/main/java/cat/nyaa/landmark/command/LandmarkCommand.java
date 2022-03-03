@@ -47,9 +47,12 @@ public class LandmarkCommand extends CommandReceiver {
             LandmarkI18n.send(sender, "command.landmark_not_found", landmarkName);
             return;
         }
+
         if (landmark.getAutoActive()) {
             landmarkManager.teleportPlayerToLandmarkName(playerId, landmarkName);
+            return;
         }
+
         playerDataManager.isPlayerLandmarkAvailable(playerId, landmarkName).thenAcceptAsync(aBoolean -> {
             if (aBoolean) {
                 landmarkManager.teleportPlayerToLandmarkName(playerId, landmarkName);
