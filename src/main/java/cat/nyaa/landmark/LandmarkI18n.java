@@ -1,6 +1,6 @@
 package cat.nyaa.landmark;
 
-import cat.nyaa.landmark.utils.ThreadUtils;
+import cat.nyaa.aolib.utils.TaskUtils;
 import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -35,7 +35,7 @@ public class LandmarkI18n extends LanguageRepository {
 
     public static void sendPlayerSync(UUID playerId, String key, Object... args) {
         if (instance == null) return;
-        ThreadUtils.callSyncAndGet(() -> {
+        TaskUtils.async.callSyncAndGet(() -> {
                     var player = Bukkit.getPlayer(playerId);
                     if (player == null) return null;
                     LandmarkI18n.send(player, key, args);

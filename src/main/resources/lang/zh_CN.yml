@@ -4,6 +4,8 @@ ui:
   adminmenu:
     title: "传送到"
 command:
+  database_busy: "数据库忙,请稍后再试。"
+  landmark_already_activated: "地标 %s 已被激活过了"
   reload:
     success: "重载成功"
   deactivate:
@@ -12,7 +14,6 @@ command:
   activate:
     no_permission: "没有激活地表 %s 的权限"
     success: "成功激活地标 %s"
-    already_activated: "地标 %s 已被激活过了"
   remove:
     finish: "地标: %s 已删除"
   edit:

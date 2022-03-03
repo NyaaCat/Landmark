@@ -2,7 +2,9 @@ package cat.nyaa.landmark.command;
 
 import cat.nyaa.landmark.LandmarkI18n;
 import cat.nyaa.landmark.LandmarkPlugin;
+import cat.nyaa.landmark.db.playerData.PlayerDataManager;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 public class LandmarkCommandManager {
@@ -26,4 +28,11 @@ public class LandmarkCommandManager {
         pluginCommand.setTabCompleter(commandReceiver);
     }
 
+    static boolean checkBusy(CommandSender sender) {
+        if (PlayerDataManager.isBusy()) {
+            LandmarkI18n.send(sender, "command.database_busy");
+            return true;
+        }
+        return false;
+    }
 }

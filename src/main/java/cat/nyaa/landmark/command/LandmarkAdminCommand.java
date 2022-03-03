@@ -1,17 +1,21 @@
 package cat.nyaa.landmark.command;
 
+import cat.nyaa.aolib.utils.CommandUtils;
 import cat.nyaa.landmark.LandmarkI18n;
 import cat.nyaa.landmark.LandmarkPlugin;
 import cat.nyaa.landmark.db.landmark.Landmark;
-import cat.nyaa.landmark.utils.CommandUtils;
 import cat.nyaa.landmark.utils.UiUtils;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LandmarkAdminCommand extends CommandReceiver {
     private final LandmarkPlugin plugin;
@@ -23,7 +27,7 @@ public class LandmarkAdminCommand extends CommandReceiver {
         this.i18n = _i18n;
     }
 
-    @SubCommand(value = "add", permission = "landmark.admin.add")
+    @SubCommand(value = "add", permission = "landmark.admin.add", tabCompleter = "addTabCompleter")
     public void add(CommandSender sender, Arguments args) {
         String name = args.nextString();
         String world = args.nextString();
@@ -46,6 +50,39 @@ public class LandmarkAdminCommand extends CommandReceiver {
         landmarkManager.setLandMark(new Landmark(name, worldObj.getName(), x, y, z, nearbyActive, autoActive, landmarkManager));
         LandmarkI18n.send(sender, "command.add.finish", name);
     }
+
+    public List<String> addTabCompleter(CommandSender sender, Arguments args) {
+        if (!(sender instanceof Player player)) return new ArrayList<>();
+        switch (args.remains()) {
+            case 1 -> {
+                //name
+                return Lists.newArrayList("<name>");
+            }
+            case 2 -> {
+                //world
+                return Lists.newArrayList(player.getWorld().getName());
+            }
+            case 3 -> {
+                //X
+                return Lists.newArrayList(String.valueOf(player.getLocation().getBlockX()));
+            }
+            case 4 -> {
+                //y
+                return Lists.newArrayList(String.valueOf(player.getLocation().getBlockY()));
+            }
+            case 5 -> {
+                //z
+                return Lists.newArrayList(String.valueOf(player.getLocation().getBlockZ()));
+            }
+            case 6, 7 -> {
+                return Lists.newArrayList(String.valueOf(false));
+            }
+            default -> {
+                return new ArrayList<>();
+            }
+        }
+    }
+
 
     @SubCommand(value = "remove", permission = "landmark.admin.remove")
     public void remove(CommandSender sender, Arguments args) {
@@ -89,7 +126,7 @@ public class LandmarkAdminCommand extends CommandReceiver {
     @SubCommand(value = "activate", permission = "landmark.admin.activate")
     public void activate(CommandSender sender, Arguments args) {
         var targetName = args.nextString();
-        var targetUUID = CommandUtils.getPlayerUUIDByStr(targetName, sender);
+        var targetUUID = CommandUtils.receiveCommand.getPlayerUUIDByStr(targetName, sender);
         if (targetUUID == null) {
             LandmarkI18n.send(sender, "command.invalid_target", targetName);
             return;
@@ -119,7 +156,7 @@ public class LandmarkAdminCommand extends CommandReceiver {
     @SubCommand(value = "deactivate", permission = "landmark.admin.deactivate")
     public void deactivate(CommandSender sender, Arguments args) {
         var targetName = args.nextString();
-        var targetUUID = CommandUtils.getPlayerUUIDByStr(targetName, sender);
+        var targetUUID = CommandUtils.receiveCommand.getPlayerUUIDByStr(targetName, sender);
         if (targetUUID == null) {
             LandmarkI18n.send(sender, "command.invalid_target", targetName);
             return;

@@ -6,6 +6,7 @@ import cat.nyaa.landmark.config.LandmarkConfig;
 import cat.nyaa.landmark.db.landmark.LandMarkManager;
 import cat.nyaa.landmark.db.landmarkDbManager;
 import cat.nyaa.landmark.db.playerData.PlayerDataManager;
+import cat.nyaa.landmark.task.LandMarkTaskManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +29,8 @@ public final class LandmarkPlugin extends JavaPlugin {
     private UIManager uiManager;
     @Nullable
     public static LandmarkPlugin instance = null;
+    @Nullable
+    private LandMarkTaskManager taskManager = null;
 
     @Override
     public void onLoad() {
@@ -43,6 +46,7 @@ public final class LandmarkPlugin extends JavaPlugin {
         this.landmarkManager = new LandMarkManager(databaseManager);
         this.pluginDataManager = new PlayerDataManager(databaseManager);
         this.uiManager = new UIManager(this);
+        this.taskManager = new LandMarkTaskManager(this);
         // Plugin startup logic
     }
 
@@ -72,6 +76,10 @@ public final class LandmarkPlugin extends JavaPlugin {
         if (uiManager != null) {
             uiManager.destructor();
             uiManager = null;
+        }
+        if (taskManager != null) {
+            taskManager.destructor();
+            taskManager = null;
         }
         // Plugin shutdown logic
     }

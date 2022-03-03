@@ -7,17 +7,25 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 public class PlayerDataManager {
     private final landmarkDbManager dbManager;
-    public static final ExecutorService playerDataExecutor = Executors.newSingleThreadExecutor();
+    private static final LinkedBlockingQueue playerDataExecutorQueue = new LinkedBlockingQueue<Runnable>();
+    public static final ExecutorService playerDataExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, playerDataExecutorQueue);
 
     public PlayerDataManager(landmarkDbManager dbManager) {
         this.dbManager = dbManager;
+    }
+
+    public static boolean isBusy() {
+        return playerDataExecutorQueue.size() >= 5;
+    }
+
+    public static boolean isIdle() {
+        return playerDataExecutorQueue.size() <= 0;
     }
 
     public CompletableFuture<List<String>> getPlayerAvailableLandmarkNames(UUID playerId) {
@@ -32,11 +40,13 @@ public class PlayerDataManager {
         return getPlayerDataId(playerId, landmarkName).thenApplyAsync(Optional::isPresent);
     }
 
-    public CompletableFuture<Boolean> setPlayerLandmarkAvailable(UUID playerId,String landmarkName,boolean value){
-        return supplyAsync(()->dbManager.setPlayerLandmarkAvailable(playerId,landmarkName,value));
+    public CompletableFuture<Boolean> setPlayerLandmarkAvailable(UUID playerId, String landmarkName, boolean value) {
+        return supplyAsync(() -> dbManager.setPlayerLandmarkAvailable(playerId, landmarkName, value));
     }
+
     @Contract("_ -> new")
     public static <U> @NotNull CompletableFuture<U> supplyAsync(Supplier<U> supplier) {
+        if (playerDataExecutor.isShutdown()) throw new RuntimeException("playerDataExecutor is shutdown");
         return CompletableFuture.supplyAsync(supplier, playerDataExecutor);
     }
 }

@@ -1,9 +1,9 @@
 package cat.nyaa.landmark.db.landmark;
 
+import cat.nyaa.aolib.utils.TaskUtils;
 import cat.nyaa.landmark.LandmarkI18n;
 import cat.nyaa.landmark.LandmarkPlugin;
 import cat.nyaa.landmark.db.landmarkDbManager;
-import cat.nyaa.landmark.utils.ThreadUtils;
 import cat.nyaa.nyaacore.utils.TeleportUtils;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
@@ -31,7 +31,7 @@ public class LandMarkManager {
      * @param name   landmark name
      */
     public boolean teleportPlayerToLandmarkName(UUID playerId, String name) {
-        Boolean result = ThreadUtils.callSyncAndGet(() -> teleportPlayerToLandmarkName0(playerId, name), null);
+        Boolean result = TaskUtils.async.callSyncAndGet(() -> teleportPlayerToLandmarkName0(playerId, name), null);
         if (result == null) return false;
         return result;
     }

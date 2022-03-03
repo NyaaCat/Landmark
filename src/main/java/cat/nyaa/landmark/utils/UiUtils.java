@@ -3,6 +3,7 @@ package cat.nyaa.landmark.utils;
 import cat.nyaa.aolib.aoui.PageUI;
 import cat.nyaa.aolib.aoui.item.CommandUiItem;
 import cat.nyaa.aolib.aoui.item.IUiItem;
+import cat.nyaa.aolib.utils.TaskUtils;
 import cat.nyaa.landmark.LandmarkI18n;
 import cat.nyaa.landmark.LandmarkPlugin;
 import cat.nyaa.landmark.db.landmark.Landmark;
@@ -15,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public class UiUtils {
     public static void openAdminMenu(Player player) {
@@ -32,8 +32,8 @@ public class UiUtils {
         var landmarkManager = plugin.getLandmarkManager();
         var playerDataManager = plugin.getPluginDataManager();
         if (landmarkManager == null || playerDataManager == null) return;
-        playerDataManager.getPlayerAvailableLandmarkNames(player.getUniqueId()).thenAcceptAsync((names) -> ThreadUtils.callSyncAndGet(() -> {
-            var landmarks = landmarkManager.getLandmarks().stream().filter(landmark -> names.contains(landmark.getName())).toList();
+        playerDataManager.getPlayerAvailableLandmarkNames(player.getUniqueId()).thenAcceptAsync((names) -> TaskUtils.async.callSyncAndGet(() -> {
+            var landmarks = landmarkManager.getLandmarks().stream().filter(landmark -> landmark.getAutoActive() || names.contains(landmark.getName())).toList();
             openMenu(landmarks, player.getUniqueId(), false);
             return null;
         }));

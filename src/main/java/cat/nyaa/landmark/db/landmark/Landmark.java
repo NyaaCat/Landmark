@@ -56,6 +56,10 @@ public class Landmark {
         return new Location(Bukkit.getWorld(model.world), model.x, model.y, model.z);
     }
 
+    public String getWorldName() {
+        return model.world;
+    }
+
     public int getX() {
         return model.x;
     }
