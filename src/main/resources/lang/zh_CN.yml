@@ -18,7 +18,7 @@ command:
     finish: "地标: %s 已删除"
   edit:
     finish: "地标: %s 已经修改"
-  all:
+  add:
     finish: "地标: %s 已创建"
   only-player-can-do: "只有玩家可以执行此命令"
   invalid_target: "目标 %s 无效"
