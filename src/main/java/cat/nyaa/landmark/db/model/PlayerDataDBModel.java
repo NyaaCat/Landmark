@@ -7,20 +7,21 @@ import java.util.UUID;
 
 @Table("playerLandmark")
 public class PlayerDataDBModel {
-    public static String getTableName() {
-        return "playerLandmark";
-    }
-    public PlayerDataDBModel(){}
     @Column(name = "id", primary = true, autoIncrement = true, nullable = true)
     public int id;
     @Column(name = "player")
     public UUID playerUniqueId;
     @Column(name = "landmark")
     public String landmarkName;
-
+    public PlayerDataDBModel() {
+    }
     public PlayerDataDBModel(int id, UUID playerUniqueId, String landmarkName) {
         this.id = id;
-        this.playerUniqueId =playerUniqueId;
+        this.playerUniqueId = playerUniqueId;
         this.landmarkName = landmarkName;
+    }
+
+    public static String getTableName() {
+        return "playerLandmark";
     }
 }

@@ -32,7 +32,7 @@ public class UiUtils {
         var landmarkManager = plugin.getLandmarkManager();
         var playerDataManager = plugin.getPluginDataManager();
         if (landmarkManager == null || playerDataManager == null) return;
-        playerDataManager.getPlayerAvailableLandmarkNames(player.getUniqueId()).thenAcceptAsync((names) -> TaskUtils.async.callSyncAndGet(() -> {
+        playerDataManager.getPlayerAvailableLandmarkNames(player.getUniqueId()).thenAccept((names) -> TaskUtils.async.callSyncAndGet(() -> {
             var landmarks = landmarkManager.getLandmarks().stream().filter(landmark -> landmark.getAutoActive() || names.contains(landmark.getName())).toList();
             openMenu(landmarks, player.getUniqueId(), false);
             return null;

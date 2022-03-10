@@ -17,8 +17,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LandMarkManager {
-    final ConcurrentHashMap<String, Landmark> landmarkMap = new ConcurrentHashMap<>();
     public final landmarkDbManager dbManager;
+    final ConcurrentHashMap<String, Landmark> landmarkMap = new ConcurrentHashMap<>();
 
     public LandMarkManager(landmarkDbManager dbManager) {
         this.dbManager = dbManager;
@@ -28,7 +28,7 @@ public class LandMarkManager {
     /**
      * Thread safe.
      *
-     * @param name   landmark name
+     * @param name landmark name
      */
     public boolean teleportPlayerToLandmarkName(UUID playerId, String name) {
         Boolean result = TaskUtils.async.callSyncAndGet(() -> teleportPlayerToLandmarkName0(playerId, name), null);
@@ -44,7 +44,7 @@ public class LandMarkManager {
             LandmarkI18n.send(player, "message.landmark.not_found", name);
             return false;
         }
-        if (TeleportUtils.Teleport(player, landmark.getLocation())) {
+        if (TeleportUtils.Teleport(player, landmark.getLocation())) { //fixme deprecate this
             LandmarkI18n.send(player, "message.landmark.teleport", landmark.getName());
             return true;
         }
@@ -67,15 +67,17 @@ public class LandMarkManager {
         return Lists.newArrayList(landmarkMap.values());
     }
 
-    public void setLandMark(@NotNull Landmark landmark) {
-        dbManager.insertOrUpdateLandmark(landmark.getModel());
+    public boolean setLandMark(@NotNull Landmark landmark) {
+        var result = dbManager.insertOrUpdateLandmark(landmark.getModel());
         refreshLandmarkCache();
+        return result > 0;
     }
 
 
-    public void removeLandmark(String name) {
-        dbManager.removeLandmark(name);
+    public boolean removeLandmark(String name) {
+        var result = dbManager.removeLandmark(name);
         refreshLandmarkCache();
+        return result>0;
     }
 
     public synchronized void refreshLandmarkCache() {

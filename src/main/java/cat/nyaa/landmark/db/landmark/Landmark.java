@@ -64,24 +64,50 @@ public class Landmark {
         return model.x;
     }
 
+    public void setX(int v) {
+        model.x = v;
+    }
+
     public int getY() {
         return model.y;
+    }
+
+    public void setY(int v) {
+        model.y = v;
     }
 
     public int getZ() {
         return model.z;
     }
 
+    public void setZ(int v) {
+        model.z = v;
+    }
+
     public int getMark() {
         return model.mark;
+    }
+
+    public void setMark(int v) {
+        model.mark = v;
     }
 
     public boolean getNearbyActive() {
         return (getMark() & 0b1) > 0;
     }
 
+    public void setNearbyActive(boolean v) {
+        if (getNearbyActive() == v) return;
+        setMark(getMark() ^ 0b1);
+    }
+
     public boolean getAutoActive() {
         return (getMark() & 0b10) > 0;
+    }
+
+    public void setAutoActive(boolean v) {
+        if (getAutoActive() == v) return;
+        setMark(getMark() ^ 0b10);
     }
 
     @Nullable
@@ -89,9 +115,17 @@ public class Landmark {
         return model.displayName;
     }
 
+    public void setDisplayName(@Nullable String v) {
+        model.displayName = v;
+    }
+
     @Nullable
     public String getIconItemString() {
         return model.iconItemBase64;
+    }
+
+    public void setIconItemString(@Nullable String v) {
+        model.iconItemBase64 = v;
     }
 
     public ItemStack getIconItem() {
@@ -124,41 +158,6 @@ public class Landmark {
     public String getDesc() {
         return model.desc;
     }
-
-    public void setX(int v) {
-        model.x = v;
-    }
-
-    public void setY(int v) {
-        model.y = v;
-    }
-
-    public void setZ(int v) {
-        model.z = v;
-    }
-
-    public void setMark(int v) {
-        model.mark = v;
-    }
-
-    public void setNearbyActive(boolean v) {
-        if (getNearbyActive() == v) return;
-        setMark(getMark() ^ 0b1);
-    }
-
-    public void setAutoActive(boolean v) {
-        if (getAutoActive() == v) return;
-        setMark(getMark() ^ 0b10);
-    }
-
-    public void setDisplayName(@Nullable String v) {
-        model.displayName = v;
-    }
-
-    public void setIconItemString(@Nullable String v) {
-        model.iconItemBase64 = v;
-    }
-
 
     public void setDesc(@Nullable String v) {
         model.desc = v;

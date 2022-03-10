@@ -17,7 +17,7 @@ public class TaskCheckPlayer implements Runnable {
 
     @Override
     public void run() {
-        if(!PlayerDataManager.isIdle())return;
+        if (!PlayerDataManager.isIdle()) return;
         this.tickNum++;
         if (LandmarkPlugin.instance == null) return;
         LandMarkManager landMarkManager = LandmarkPlugin.instance.getLandmarkManager();
@@ -27,11 +27,10 @@ public class TaskCheckPlayer implements Runnable {
         final var nearbyDistance = landmarkConfig.nearbyDistance;
 
         var allLandmark = landMarkManager.getLandmarks();
-        Bukkit.getOnlinePlayers().forEach((p) -> {
-            TaskUtils.tickScheduler.mod32TickToRun(tickNum, p.getUniqueId(),
-                    () -> playerTick(p, allLandmark, nearbyDistance)
-            );
-        });
+        Bukkit.getOnlinePlayers().forEach((p) ->
+                TaskUtils.tickScheduler.mod32TickToRun(tickNum, p.getUniqueId(),
+                        () -> playerTick(p, allLandmark, nearbyDistance)
+                ));
     }
 
     private void playerTick(Player player, List<Landmark> allLandmark, double nearbyDistance) {
@@ -41,7 +40,7 @@ public class TaskCheckPlayer implements Runnable {
 
         var playerId = player.getUniqueId();
         var nearbyLandmarks = allLandmark.stream().filter((l) -> filterNearbyLandMark(player, l, nearbyDistance)).toList();
-        playerDataManager.getPlayerAvailableLandmarkNames(playerId).thenAcceptAsync((names) -> {
+        playerDataManager.getPlayerAvailableLandmarkNames(playerId).thenAccept((names) -> {
                     for (Landmark nearbyLandmark : nearbyLandmarks) {
                         if (!nearbyLandmark.getNearbyActive()) continue;
                         if (names.contains(nearbyLandmark.getName())) continue;

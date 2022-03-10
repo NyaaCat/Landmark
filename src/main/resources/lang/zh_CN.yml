@@ -9,10 +9,12 @@ command:
   reload:
     success: "重载成功"
   deactivate:
+    fail: "取消激活地标 %s 失败"
     success: "取消激活地标 %s"
     not_yet_activated: "地标 %s 未出于激活状态"
   activate:
-    no_permission: "没有激活地表 %s 的权限"
+    fail: "激活地标 %s 失败"
+    no_permission: "没有激活地标 %s 的权限"
     success: "成功激活地标 %s"
   remove:
     finish: "地标: %s 已删除"

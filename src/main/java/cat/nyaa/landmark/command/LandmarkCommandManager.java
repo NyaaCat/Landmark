@@ -18,6 +18,14 @@ public class LandmarkCommandManager {
         regCommand(plugin, "landmarkadmin", landmarkAdminCommand);
     }
 
+    static boolean checkBusy(CommandSender sender) {
+        if (PlayerDataManager.isBusy()) {
+            LandmarkI18n.send(sender, "command.database_busy");
+            return true;
+        }
+        return false;
+    }
+
     private void regCommand(@NotNull LandmarkPlugin plugin, @NotNull String commandName, @NotNull CommandReceiver commandReceiver) {
         var pluginCommand = plugin.getCommand(commandName);
         if (pluginCommand == null) {
@@ -26,13 +34,5 @@ public class LandmarkCommandManager {
         }
         pluginCommand.setExecutor(commandReceiver);
         pluginCommand.setTabCompleter(commandReceiver);
-    }
-
-    static boolean checkBusy(CommandSender sender) {
-        if (PlayerDataManager.isBusy()) {
-            LandmarkI18n.send(sender, "command.database_busy");
-            return true;
-        }
-        return false;
     }
 }

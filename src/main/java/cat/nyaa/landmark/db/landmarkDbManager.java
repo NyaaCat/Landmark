@@ -18,8 +18,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class landmarkDbManager {
-    private final LandmarkDatabaseConfig databaseConfig;
     public static final UUID lock = UUID.randomUUID();
+    private final LandmarkDatabaseConfig databaseConfig;
 
     public landmarkDbManager(@NotNull LandmarkDatabaseConfig landmarkDatabaseConfig) {
         this.databaseConfig = landmarkDatabaseConfig;
@@ -76,7 +76,7 @@ public class landmarkDbManager {
             ) {
                 ps.setInt(1, id);
                 try (var rs = ps.executeQuery()) {
-                    while (rs.next()) {
+                    if (rs.next()) {
                         return Optional.ofNullable(rs2playerDataModel(rs));
                     }
                 }
@@ -148,7 +148,7 @@ public class landmarkDbManager {
             ps.setString(1, playerId.toString());
             ps.setString(2, landmarkName);
             try (var rs = ps.executeQuery()) {
-                while (rs.next()) {
+                if (rs.next()) {
                     return Optional.of(rs.getInt("id"));
                 }
             }
@@ -179,7 +179,7 @@ public class landmarkDbManager {
         try (var ps = conn.prepareStatement("SELECT COUNT(*) FROM " + LandmarkDBModel.getTableName() + " WHERE name=?")) {
             ps.setString(1, name);
             try (var rs = ps.executeQuery()) {
-                while (rs.next()) {
+                if (rs.next()) {
                     return rs.getInt(1) > 0;
                 }
             }

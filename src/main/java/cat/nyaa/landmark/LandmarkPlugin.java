@@ -14,9 +14,9 @@ import java.util.Optional;
 
 public final class LandmarkPlugin extends JavaPlugin {
     @Nullable
-    private LandmarkConfig landmarkConfig;
+    public static LandmarkPlugin instance = null;
     @Nullable
-    private LandmarkI18n i18n;
+    private LandmarkConfig landmarkConfig;
     @Nullable
     private LandmarkCommandManager landmarkCommandManager;
     @Nullable
@@ -28,8 +28,6 @@ public final class LandmarkPlugin extends JavaPlugin {
     @Nullable
     private UIManager uiManager;
     @Nullable
-    public static LandmarkPlugin instance = null;
-    @Nullable
     private LandMarkTaskManager taskManager = null;
 
     @Override
@@ -40,8 +38,8 @@ public final class LandmarkPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         this.landmarkConfig = new LandmarkConfig(this);
-        this.i18n = new LandmarkI18n(this, this.landmarkConfig.language);
-        this.landmarkCommandManager = new LandmarkCommandManager(this, this.i18n);
+        @Nullable LandmarkI18n i18n = new LandmarkI18n(this, this.landmarkConfig.language);
+        this.landmarkCommandManager = new LandmarkCommandManager(this, i18n);
         this.databaseManager = new landmarkDbManager(landmarkConfig.landmarkDatabaseConfig);
         this.landmarkManager = new LandMarkManager(databaseManager);
         this.pluginDataManager = new PlayerDataManager(databaseManager);
@@ -69,6 +67,14 @@ public final class LandmarkPlugin extends JavaPlugin {
 
     public @Nullable LandmarkConfig getLandmarkConfig() {
         return landmarkConfig;
+    }
+
+    public @Nullable LandmarkCommandManager getLandmarkCommandManager() {
+        return landmarkCommandManager;
+    }
+
+    public @Nullable landmarkDbManager getDatabaseManager() {
+        return databaseManager;
     }
 
     @Override

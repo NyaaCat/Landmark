@@ -5,19 +5,12 @@ import cat.nyaa.nyaacore.orm.annotations.Table;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
 @Table("landmark")
 public class LandmarkDBModel {
-    public LandmarkDBModel() {
-    }
-
     @Column(name = "name", primary = true)
-    @NotNull
-    public String name;
+    public String name; //notnull
     @Column(name = "world")
-    @NotNull
-    public String world;
+    public String world; //notnull
     @Column(name = "x")
     public int x;
     @Column(name = "y")
@@ -35,6 +28,8 @@ public class LandmarkDBModel {
     @Column(name = "desc", nullable = true)
     @Nullable
     public String desc;
+    public LandmarkDBModel() {
+    }
 
     public LandmarkDBModel(@NotNull String name, @NotNull String world, int x, int y, int z, int mark, @Nullable String display, @Nullable String item, @Nullable String desc) {
         this.name = name;

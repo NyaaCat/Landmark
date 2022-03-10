@@ -5,7 +5,6 @@ import cat.nyaa.landmark.LandmarkI18n;
 import cat.nyaa.landmark.LandmarkPlugin;
 import cat.nyaa.landmark.db.landmark.Landmark;
 import cat.nyaa.landmark.utils.UiUtils;
-import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
@@ -19,12 +18,10 @@ import java.util.List;
 
 public class LandmarkAdminCommand extends CommandReceiver {
     private final LandmarkPlugin plugin;
-    private final ILocalizer i18n;
 
     public LandmarkAdminCommand(LandmarkPlugin plugin, LandmarkI18n _i18n) {
         super(plugin, _i18n);
         this.plugin = plugin;
-        this.i18n = _i18n;
     }
 
     @SubCommand(value = "add", permission = "landmark.admin.add", tabCompleter = "addTabCompleter")
@@ -143,7 +140,7 @@ public class LandmarkAdminCommand extends CommandReceiver {
 
         var playerDataManager = plugin.getPluginDataManager();
         if (playerDataManager == null) return;
-        playerDataManager.isPlayerLandmarkAvailable(targetUUID, landmarkName).thenAcceptAsync((b) -> {
+        playerDataManager.isPlayerLandmarkAvailable(targetUUID, landmarkName).thenAccept((b) -> {
             if (!b) {
                 playerDataManager.setPlayerLandmarkAvailable(targetUUID, landmarkName, true);
                 LandmarkI18n.sendPlayerSync(targetUUID, "command.activate.success", landmarkName);
@@ -174,10 +171,16 @@ public class LandmarkAdminCommand extends CommandReceiver {
 
         var playerDataManager = plugin.getPluginDataManager();
         if (playerDataManager == null) return;
-        playerDataManager.isPlayerLandmarkAvailable(targetUUID, landmarkName).thenAcceptAsync((b) -> {
+        playerDataManager.isPlayerLandmarkAvailable(targetUUID, landmarkName).thenAccept((b) -> {
             if (b) {
-                playerDataManager.setPlayerLandmarkAvailable(targetUUID, landmarkName, false);
-                LandmarkI18n.sendPlayerSync(targetUUID, "command.deactivate.success", landmarkName);
+                playerDataManager.setPlayerLandmarkAvailable(targetUUID, landmarkName, false).thenAccept((b1) -> {
+                    if (b1) {
+                        LandmarkI18n.sendPlayerSync(targetUUID, "command.deactivate.success", landmarkName);
+                    } else {
+                        LandmarkI18n.sendPlayerSync(targetUUID, "command.deactivate.fail", landmarkName);
+                    }
+                });
+
             } else {
                 LandmarkI18n.sendPlayerSync(targetUUID, "command.deactivate.not_yet_activated", landmarkName);
             }

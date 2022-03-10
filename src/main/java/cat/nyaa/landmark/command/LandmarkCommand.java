@@ -9,14 +9,69 @@ import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.ExecutionException;
-
 public class LandmarkCommand extends CommandReceiver {
     private final LandmarkPlugin plugin;
 
     public LandmarkCommand(LandmarkPlugin plugin, LandmarkI18n _i18n) {
         super(plugin, _i18n);
         this.plugin = plugin;
+    }
+
+    public static void tryToActiveLandmark(String landmarkName, Player player) {
+        var plugin = LandmarkPlugin.instance;
+        if (plugin == null) return;
+        var landMarkManager = plugin.getLandmarkManager();
+        if (landMarkManager == null) return;
+        var landmark = landMarkManager.getLandmark(landmarkName);
+        if (landmark == null) {
+            LandmarkI18n.send(player, "command.landmark_not_found", landmarkName);
+            return;
+        }
+        boolean hasActivePermission = false;
+        if (landmark.getAutoActive()) {
+            LandmarkI18n.send(player, "command.landmark_already_activated", landmarkName);
+            return;
+        }
+        if (landmark.getNearbyActive() && landMarkManager.isNearbyLandmark(player, landmark)) {
+            hasActivePermission = true;
+        }
+        var playerDataManager = plugin.getPluginDataManager();
+        if (playerDataManager == null) return;
+        var playerId = player.getUniqueId();
+        boolean finalHasActivePermission = hasActivePermission;
+        playerDataManager.isPlayerLandmarkAvailable(playerId, landmarkName)
+                .thenApply(
+                        (aBoolean) -> {
+                            if (!aBoolean) {
+                                if (!finalHasActivePermission) {
+                                    LandmarkI18n.sendPlayerSync(playerId, "command.activate.no_permission", landmarkName);
+                                    return false;
+                                }
+                                return true;
+                            } else {
+                                LandmarkI18n.sendPlayerSync(playerId, "command.activate.already_activated", landmarkName);
+                                return false;
+                            }
+                        }
+                )
+                .thenApply(
+                        aBoolean -> {
+                            if (aBoolean) {
+                                playerDataManager.setPlayerLandmarkAvailable(playerId, landmarkName, true)
+                                        .thenAccept((b) -> {
+                                                    if (b) {
+                                                        LandmarkI18n.sendPlayerSync(playerId, "command.activate.success", landmarkName);
+                                                    } else {
+                                                        LandmarkI18n.sendPlayerSync(playerId, "command.activate.fail", landmarkName);
+                                                    }
+                                                }
+                                        );
+
+                                return true;
+                            }
+                            return false;
+                        }
+                );
     }
 
     @SubCommand(value = "menu", isDefaultCommand = true, permission = "landmark.command.menu")
@@ -53,7 +108,7 @@ public class LandmarkCommand extends CommandReceiver {
             return;
         }
 
-        playerDataManager.isPlayerLandmarkAvailable(playerId, landmarkName).thenAcceptAsync(aBoolean -> {
+        playerDataManager.isPlayerLandmarkAvailable(playerId, landmarkName).thenAccept(aBoolean -> {
             if (aBoolean) {
                 landmarkManager.teleportPlayerToLandmarkName(playerId, landmarkName);
             } else {
@@ -79,59 +134,6 @@ public class LandmarkCommand extends CommandReceiver {
         }
         tryToActiveLandmark(landmarkName, player);
 
-    }
-
-    public static void tryToActiveLandmark(String landmarkName, Player player) {
-        var plugin = LandmarkPlugin.instance;
-        if (plugin == null) return;
-        var landMarkManager = plugin.getLandmarkManager();
-        if (landMarkManager == null) return;
-        var landmark = landMarkManager.getLandmark(landmarkName);
-        if (landmark == null) {
-            LandmarkI18n.send(player, "command.landmark_not_found", landmarkName);
-            return;
-        }
-        boolean hasActivePermission = false;
-        if (landmark.getAutoActive()) {
-            LandmarkI18n.send(player, "command.landmark_already_activated", landmarkName);
-            return;
-        }
-        if (landmark.getNearbyActive() && landMarkManager.isNearbyLandmark(player, landmark)) {
-            hasActivePermission = true;
-        }
-        var playerDataManager = plugin.getPluginDataManager();
-        if (playerDataManager == null) return;
-        var playerId = player.getUniqueId();
-        boolean finalHasActivePermission = hasActivePermission;
-        playerDataManager.isPlayerLandmarkAvailable(playerId, landmarkName)
-                .thenApplyAsync(
-                        (aBoolean) -> {
-                            if (!aBoolean) {
-                                if (!finalHasActivePermission) {
-                                    LandmarkI18n.sendPlayerSync(playerId, "command.activate.no_permission", landmarkName);
-                                    return false;
-                                }
-                                return true;
-                            } else {
-                                LandmarkI18n.sendPlayerSync(playerId, "command.activate.already_activated", landmarkName);
-                                return false;
-                            }
-                        }
-                )
-                .thenApplyAsync(
-                        aBoolean -> {
-                            if (aBoolean) {
-                                try {
-                                    playerDataManager.setPlayerLandmarkAvailable(playerId, landmarkName, true).get();
-                                    LandmarkI18n.sendPlayerSync(playerId, "command.activate.success", landmarkName);
-                                    return true;
-                                } catch (InterruptedException | ExecutionException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            return false;
-                        }
-                );
     }
 
     @Override
